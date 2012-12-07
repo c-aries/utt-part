@@ -1,0 +1,5 @@
+$ yelp gedit.xml 
+http://developer.gnome.org/gdp-handbook/stable/gettingstarted.html.en
+http://developer.gnome.org/gdp-handbook/stable/gnomedocsystem.html.en
+$ xmllint --noout --noent --valid japan.xml
+http://developer.gnome.org/gdp-handbook/stable/gettingstarted.html.en#usingdocbook
