@@ -1,18 +1,21 @@
 #include "utt_cache.h"
 
-struct utt_cache_ops {
-  void (*restore_from_disk) (struct utt_cache *cache);
-};
-struct utt_cache_item {
-  gchar *name;
-  struct utt_cache_ops *op;
-  void *data;
-};
-
 void
 utt_cache_register (struct utt_cache *cache, struct utt_cache_item *item)
 {
   cache->list = g_list_prepend (cache->list, item);
+}
+
+static void
+list_func (struct utt_cache_item *item, struct utt_cache *cache)
+{
+  g_print ("%s\n", item->name);
+}
+
+void
+utt_cache_flush (struct utt_cache *cache)
+{
+  g_list_foreach (cache->list, (GFunc)list_func, cache);
 }
 
 struct utt_cache *
@@ -22,6 +25,28 @@ utt_cache_new ()
 
   cache = g_new0 (struct utt_cache, 1);
   return cache;
+}
+
+gboolean
+utt_cache_set_cachefile (struct utt_cache *cache, gchar *path)
+{
+  FILE *fp;
+
+  if (!cache) {
+    return FALSE;
+  }
+  fp = g_fopen (path, "wb+");
+  if (!fp) {
+    g_warning ("open %s fail", path);
+    return FALSE;
+  }
+  
+  if (cache->savefile) {
+    fclose (cache->savefile);
+  }
+  cache->savefile = fp;
+  /* parse and restore cache list data */
+  return TRUE;
 }
 
 gboolean
